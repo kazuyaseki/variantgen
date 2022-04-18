@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { PropertyItem } from './components/PropertyItem';
 import { Property } from './models/property';
@@ -8,9 +8,27 @@ const dummyProps: Property[] = [
   { name: 'size', values: ['small', 'large'] },
 ];
 
+type FigmaVariantGroups = { [property: string]: { values: string[] } };
+
 function App() {
   const [props, setProps] = useState<Property[]>(dummyProps);
   const [newProp, setNewProp] = useState<Property | null>();
+
+  useEffect(() => {
+    onmessage = (event) => {
+      const variantGroups = event.data.pluginMessage
+        .variantGroups as FigmaVariantGroups | null;
+      if (variantGroups) {
+        const _props: Property[] = Object.keys(variantGroups).map((key) => {
+          return {
+            name: key,
+            values: variantGroups[key].values,
+          };
+        });
+        setProps(_props);
+      }
+    };
+  }, []);
 
   const addNewProp = () => {
     if (newProp) {
