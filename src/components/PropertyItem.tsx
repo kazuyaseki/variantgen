@@ -21,6 +21,23 @@ export const PropertyItem: React.FC<Props> = (props) => {
     setIsEditingName(false);
   };
 
+  const [isEditingValues, setIsEditingValues] = useState(false);
+  const [editingValues, setEditingValues] = useState('');
+
+  useEffect(() => {
+    if (isEditingValues) {
+      setEditingValues(props.property.values.join('/'));
+    }
+  }, [isEditingValues]);
+
+  const onBlurValuesField = () => {
+    props.onUpdateProperty({
+      ...props.property,
+      values: editingValues.split('/'),
+    });
+    setIsEditingValues(false);
+  };
+
   return (
     <li>
       {isEditingName ? (
@@ -38,7 +55,20 @@ export const PropertyItem: React.FC<Props> = (props) => {
         </button>
       )}
 
-      <button>{props.property.values.join('/')}</button>
+      {isEditingValues ? (
+        <input
+          type="text"
+          maxLength={64}
+          value={editingValues}
+          onChange={(e) => setEditingValues(e.target.value)}
+          autoFocus
+          onBlur={onBlurValuesField}
+        />
+      ) : (
+        <button onClick={() => setIsEditingValues(true)}>
+          {props.property.values.join('/')}
+        </button>
+      )}
     </li>
   );
 };
