@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { PropertyItem } from './components/PropertyItem';
+import { VariantSettingItem } from './components/VariantSettingItem';
 import { Property } from './models/property';
 
 const dummyProps: Property[] = [
@@ -13,6 +14,9 @@ type FigmaVariantGroups = { [property: string]: { values: string[] } };
 function App() {
   const [props, setProps] = useState<Property[]>(dummyProps);
   const [newProp, setNewProp] = useState<Property | null>();
+
+  const [currentSelectedProperty, setCurrentSelectedProperty] =
+    useState<Property | null>(null);
 
   useEffect(() => {
     onmessage = (event) => {
@@ -71,11 +75,11 @@ function App() {
 
         <div>
           <h2>Variant Settings</h2>
-          <p>
-            When Property is Value, set layername's background-color is #000000
-          </p>
+          <VariantSettingItem properties={props} />
         </div>
       </section>
+
+      <button>Generate</button>
     </div>
   );
 }
